@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KKK Timer</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js for Visual Stats -->
+    <!-- Chart.js for Responsive Solve Trend Visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
@@ -35,35 +35,39 @@
 
         /* Custom Scrollbars */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 4px;
+            height: 4px;
         }
         ::-webkit-scrollbar-track {
             background: #18181b;
         }
         ::-webkit-scrollbar-thumb {
             background: #3f3f46;
-            border-radius: 3px;
+            border-radius: 4px;
         }
 
         .tabular-nums {
             font-variant-numeric: tabular-nums;
         }
 
-        /* Prevent text zoom on double tap on iOS */
-        * {
-            touch-action: manipulation;
+        /* Hide horizontal scrollbar for clean cube selector on mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
-<body class="h-screen flex flex-col justify-between bg-zinc-950 text-zinc-100 overflow-hidden">
+<body class="h-screen w-screen flex flex-col justify-between bg-zinc-950 text-zinc-100 overflow-hidden select-none">
 
     <!-- TOP HEADER -->
-    <header class="w-full bg-zinc-900 border-b border-zinc-800 px-3 sm:px-6 py-2.5 flex items-center justify-between shrink-0 z-20">
-        <!-- Top Left: Name & Settings -->
+    <header class="w-full bg-zinc-900 border-b border-zinc-800 px-3 sm:px-6 py-2 flex items-center justify-between shrink-0 z-20">
+        <!-- Top Left: Name & Settings Gear -->
         <div class="flex items-center space-x-2 sm:space-x-3">
-            <span class="font-bold text-sm sm:text-lg text-emerald-400 tracking-wide">K.Krithik</span>
-            <button id="settings-btn" title="Settings" class="p-1.5 sm:p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition cursor-pointer active:scale-95">
+            <span class="font-extrabold text-sm sm:text-lg text-emerald-400 tracking-wide whitespace-nowrap">K.Krithik</span>
+            <button id="settings-btn" title="Settings" class="p-1.5 sm:p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition active:scale-95 cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -71,14 +75,14 @@
             </button>
         </div>
 
-        <!-- Top Center: Timer Title -->
-        <div class="text-center">
-            <h1 class="text-xl sm:text-2xl font-black tracking-widest text-white uppercase drop-shadow">KKK</h1>
+        <!-- Top Center: Timer Name -->
+        <div class="text-center px-2">
+            <h1 class="text-lg sm:text-2xl font-black tracking-widest text-white uppercase drop-shadow">KKK</h1>
         </div>
 
-        <!-- Top Right: Session Selector -->
+        <!-- Top Right: Session Selector & Controls -->
         <div class="flex items-center space-x-1.5 sm:space-x-2">
-            <select id="session-select" class="bg-zinc-800 text-xs sm:text-sm text-zinc-200 border border-zinc-700 rounded-lg px-2 sm:px-3 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <select id="session-select" class="bg-zinc-800 text-xs sm:text-sm text-zinc-200 border border-zinc-700 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-emerald-500 max-w-[110px] sm:max-w-[180px] truncate">
                 <!-- Dynamically populated -->
             </select>
             <button id="add-session-btn" title="Create New Session" class="p-1 sm:p-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition active:scale-95">
@@ -86,7 +90,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
             </button>
-            <button id="delete-session-btn" title="Delete Current Session" class="p-1 sm:p-1.5 rounded-lg bg-red-900/60 hover:bg-red-600 text-red-200 hover:text-white transition active:scale-95">
+            <button id="delete-session-btn" title="Delete Session" class="p-1 sm:p-1.5 rounded-lg bg-red-900/60 hover:bg-red-600 text-red-200 hover:text-white transition active:scale-95">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
@@ -94,89 +98,90 @@
         </div>
     </header>
 
-    <!-- MAIN APP CONTENT -->
+    <!-- MAIN APP CONTENT GRID (Fully Responsive) -->
     <div class="flex-grow flex flex-col md:flex-row overflow-hidden relative">
 
-        <!-- SIDEBAR: STATS & SOLVES (Collapsible on Mobile) -->
-        <aside class="w-full md:w-80 bg-zinc-900/90 border-b md:border-b-0 md:border-r border-zinc-800 p-3 sm:p-4 flex flex-col justify-between overflow-y-auto shrink-0 z-10 max-h-48 md:max-h-none">
+        <!-- SIDEBAR / COLLAPSIBLE BOTTOM PANEL FOR MOBILE: STATS & SOLVES -->
+        <aside class="w-full md:w-80 bg-zinc-900/95 border-b md:border-b-0 md:border-r border-zinc-800 p-3 flex flex-col justify-between overflow-y-auto shrink-0 z-10 max-h-52 md:max-h-none">
             <div>
                 <!-- Statistics Header -->
                 <div class="flex justify-between items-center mb-2 pb-1 border-b border-zinc-800">
                     <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Statistics</h2>
-                    <span id="stat-count-badge" class="text-xs bg-emerald-950 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-800/50">0 Solves</span>
+                    <span id="stat-count-badge" class="text-[10px] bg-emerald-950 text-emerald-400 font-bold px-2 py-0.5 rounded-full border border-emerald-800/50">0 Solves</span>
                 </div>
 
+                <!-- Stats Grid (Count, Best, Mo3, Ao3, Ao5, Ao12, Ao50, Ao100) -->
                 <div class="grid grid-cols-4 md:grid-cols-2 gap-1.5 text-xs mb-3">
-                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[10px]">BEST</span> <span id="stat-best" class="font-semibold text-emerald-400 font-mono">-</span></div>
-                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[10px]">Mo3</span> <span id="stat-mo3" class="font-semibold font-mono">-</span></div>
-                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[10px]">Ao3</span> <span id="stat-ao3" class="font-semibold font-mono">-</span></div>
-                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[10px]">Ao5</span> <span id="stat-ao5" class="font-semibold font-mono">-</span></div>
-                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[10px]">Ao12</span> <span id="stat-ao12" class="font-semibold font-mono">-</span></div>
-                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[10px]">Ao50</span> <span id="stat-ao50" class="font-semibold font-mono">-</span></div>
-                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[10px]">Ao100</span> <span id="stat-ao100" class="font-semibold font-mono">-</span></div>
-                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[10px]">TOTAL</span> <span id="stat-count" class="font-semibold font-mono">0</span></div>
+                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[9px] uppercase">Best</span> <span id="stat-best" class="font-semibold text-emerald-400 font-mono text-xs">-</span></div>
+                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[9px] uppercase">Mo3</span> <span id="stat-mo3" class="font-semibold font-mono text-xs">-</span></div>
+                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[9px] uppercase">Ao3</span> <span id="stat-ao3" class="font-semibold font-mono text-xs">-</span></div>
+                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[9px] uppercase">Ao5</span> <span id="stat-ao5" class="font-semibold font-mono text-xs">-</span></div>
+                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[9px] uppercase">Ao12</span> <span id="stat-ao12" class="font-semibold font-mono text-xs">-</span></div>
+                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[9px] uppercase">Ao50</span> <span id="stat-ao50" class="font-semibold font-mono text-xs">-</span></div>
+                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[9px] uppercase">Ao100</span> <span id="stat-ao100" class="font-semibold font-mono text-xs">-</span></div>
+                    <div class="bg-zinc-800/60 p-1.5 rounded-lg"><span class="text-zinc-500 block text-[9px] uppercase">Total</span> <span id="stat-count" class="font-semibold font-mono text-xs">0</span></div>
                 </div>
 
-                <!-- Session Chart (Hidden on small screens to preserve workspace) -->
-                <div class="hidden md:block">
-                    <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2 pb-1 border-b border-zinc-800">Solve Trend</h2>
-                    <div class="bg-zinc-800/40 p-2 rounded-lg mb-3 h-28 relative">
+                <!-- SOLVE TREND BAR CHART (Explicitly responsive and visible across mobile & desktop) -->
+                <div class="mb-3">
+                    <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1 pb-1 border-b border-zinc-800">Solve Trend</h2>
+                    <div class="bg-zinc-800/40 p-1.5 rounded-lg h-24 sm:h-32 w-full relative">
                         <canvas id="sessionChart"></canvas>
                     </div>
                 </div>
 
-                <!-- History Header -->
-                <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2 pb-1 border-b border-zinc-800">Session Solves</h2>
-                <div id="solves-list" class="space-y-1 max-h-24 md:max-h-52 overflow-y-auto pr-1">
+                <!-- Solve History List -->
+                <h2 class="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1.5 pb-1 border-b border-zinc-800">Session Solves</h2>
+                <div id="solves-list" class="space-y-1 max-h-24 md:max-h-48 overflow-y-auto pr-1">
                     <!-- Dynamic Solve Items -->
                 </div>
             </div>
         </aside>
 
-        <!-- MAIN TIMER AREA (Supports both Touch Screen & Spacebar) -->
-        <main id="main-timer" class="flex-grow flex flex-col justify-between items-center p-4 sm:p-6 text-center relative select-none cursor-pointer">
+        <!-- MAIN TIMER WORKSPACE -->
+        <main id="main-timer" class="flex-grow flex flex-col justify-between items-center p-3 sm:p-6 text-center relative select-none cursor-pointer">
             
-            <!-- Scramble Display -->
+            <!-- Scramble Display Container -->
             <div class="w-full max-w-3xl my-auto pointer-events-none">
-                <div id="scramble" class="text-base sm:text-xl md:text-2xl font-mono font-medium tracking-wide text-zinc-200 bg-zinc-900/80 p-3 sm:p-5 rounded-2xl border border-zinc-800 shadow-xl break-words min-h-[3.5rem] flex items-center justify-center leading-relaxed">
+                <div id="scramble" class="text-sm sm:text-xl md:text-2xl font-mono font-medium tracking-wide text-zinc-200 bg-zinc-900/90 p-3 sm:p-5 rounded-xl border border-zinc-800 shadow-xl break-words min-h-[3rem] flex items-center justify-center leading-relaxed">
                     Generating scramble...
                 </div>
             </div>
 
-            <!-- Timer Live Number Display -->
-            <div class="my-auto pointer-events-none">
-                <div id="timer-display" class="text-6xl sm:text-8xl md:text-9xl font-extrabold tabular-nums tracking-tight text-white drop-shadow-xl transition-colors duration-75">
+            <!-- Big Timer Numbers -->
+            <div class="my-auto pointer-events-none py-2">
+                <div id="timer-display" class="text-6xl sm:text-8xl md:text-9xl font-black tabular-nums tracking-tight text-white drop-shadow-2xl transition-colors duration-75">
                     0.00
                 </div>
-                <div id="status-indicator" class="text-xs sm:text-sm uppercase tracking-widest font-semibold mt-2 text-zinc-500">
-                    Touch screen or hold SPACE
+                <div id="status-indicator" class="text-xs sm:text-sm uppercase tracking-widest font-bold mt-2 text-zinc-500">
+                    Touch screen or hold SPACEBAR
                 </div>
             </div>
 
             <!-- Helper Instructions -->
             <div id="instructions" class="text-xs sm:text-sm text-zinc-500 my-auto pointer-events-none">
-                <span class="hidden sm:inline">Hold <kbd class="px-2 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-300 font-mono">SPACEBAR</kbd> or touch display for 0.5s to start. Tap anywhere to stop.</span>
-                <span class="inline sm:hidden">Touch & Hold screen 0.5s until green, then release to start. Tap to stop.</span>
+                <span class="hidden sm:inline">Hold <kbd class="px-2 py-0.5 bg-zinc-800 rounded border border-zinc-700 text-zinc-300 font-mono">SPACEBAR</kbd> for 0.5s until green, then release to start.</span>
+                <span class="inline sm:hidden">Touch & hold screen 0.5s until green, then release to start timer.</span>
             </div>
         </main>
     </div>
 
-    <!-- BOTTOM TOOLBAR: PUZZLE SELECTOR -->
-    <footer class="w-full bg-zinc-900 border-t border-zinc-800 px-2 sm:px-4 py-2 flex justify-center items-center z-20 shrink-0">
-        <div class="flex flex-wrap justify-center gap-1.5 sm:gap-2" id="cube-selector">
-            <button data-cube="3x3" class="cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white transition active:scale-95">3*3</button>
-            <button data-cube="4x4" class="cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">4*4</button>
-            <button data-cube="5x5" class="cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">5*5</button>
-            <button data-cube="6x6" class="cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">6*6</button>
-            <button data-cube="7x7" class="cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">7*7</button>
-            <button data-cube="2x2" class="cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">2*2</button>
-            <button data-cube="skewb" class="cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">skweb</button>
+    <!-- BOTTOM TOOLBAR: EXPLICITLY VISIBLE MOBILE-RESPONSIVE CUBE TYPE SELECTOR -->
+    <footer class="w-full bg-zinc-900 border-t border-zinc-800 px-2 py-2 flex justify-center items-center z-20 shrink-0">
+        <div class="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar max-w-full px-2" id="cube-selector">
+            <button data-cube="3x3" class="cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white transition active:scale-95 shadow">3*3</button>
+            <button data-cube="4x4" class="cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">4*4</button>
+            <button data-cube="5x5" class="cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">5*5</button>
+            <button data-cube="6x6" class="cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">6*6</button>
+            <button data-cube="7x7" class="cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">7*7</button>
+            <button data-cube="2x2" class="cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">2*2</button>
+            <button data-cube="skewb" class="cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition active:scale-95">skweb</button>
         </div>
     </footer>
 
     <!-- SETTINGS MODAL DIALOG -->
     <div id="settings-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 hidden">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-xl w-full flex flex-col max-h-[90vh] shadow-2xl overflow-hidden">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full flex flex-col max-h-[90vh] shadow-2xl overflow-hidden">
             <!-- Modal Header -->
             <div class="p-3 sm:p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950">
                 <h3 class="text-base sm:text-lg font-bold text-white">Settings</h3>
@@ -187,11 +192,11 @@
                 </button>
             </div>
 
-            <!-- Modal Tabs -->
-            <div class="flex border-b border-zinc-800 bg-zinc-900 overflow-x-auto">
-                <button data-tab="about" class="tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-medium text-emerald-400 border-b-2 border-emerald-500 whitespace-nowrap focus:outline-none">ABOUT</button>
-                <button data-tab="shortcuts" class="tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-medium text-zinc-400 border-b-2 border-transparent hover:text-zinc-200 whitespace-nowrap focus:outline-none">Keyboard & Touch Shortcuts</button>
-                <button data-tab="features" class="tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-medium text-zinc-400 border-b-2 border-transparent hover:text-zinc-200 whitespace-nowrap focus:outline-none">Enable Features</button>
+            <!-- Modal Navigation Tabs -->
+            <div class="flex border-b border-zinc-800 bg-zinc-900 overflow-x-auto no-scrollbar">
+                <button data-tab="about" class="tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-bold text-emerald-400 border-b-2 border-emerald-500 whitespace-nowrap focus:outline-none">ABOUT</button>
+                <button data-tab="shortcuts" class="tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-bold text-zinc-400 border-b-2 border-transparent hover:text-zinc-200 whitespace-nowrap focus:outline-none">Keyboard Shortcuts</button>
+                <button data-tab="features" class="tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-bold text-zinc-400 border-b-2 border-transparent hover:text-zinc-200 whitespace-nowrap focus:outline-none">Enable Features</button>
             </div>
 
             <!-- Modal Content Panels -->
@@ -207,31 +212,31 @@
 
                 <!-- CATEGORY 2: SHORTCUTS TAB -->
                 <div id="tab-shortcuts" class="tab-content hidden space-y-3">
-                    <h4 class="font-bold text-emerald-400 border-b border-zinc-800 pb-1">Desktop Controls</h4>
+                    <h4 class="font-bold text-emerald-400 border-b border-zinc-800 pb-1">Desktop Keyboard Controls</h4>
                     <div class="flex justify-between items-center py-1">
                         <span>Hold Spacebar (0.5s)</span>
-                        <kbd class="px-2 py-0.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-200">Prepare Timer</kbd>
+                        <kbd class="px-2 py-0.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-200">Arm Timer</kbd>
                     </div>
                     <div class="flex justify-between items-center py-1">
                         <span>Release Spacebar</span>
-                        <kbd class="px-2 py-0.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-200">Start Timer / Inspection</kbd>
+                        <kbd class="px-2 py-0.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-200">Start Solve / Inspection</kbd>
                     </div>
                     <div class="flex justify-between items-center py-1 border-b border-zinc-800 pb-2">
                         <span>Press Any Key</span>
                         <kbd class="px-2 py-0.5 bg-zinc-800 border border-zinc-700 rounded text-xs text-zinc-200">Stop Timer</kbd>
                     </div>
 
-                    <h4 class="font-bold text-emerald-400 border-b border-zinc-800 pb-1 pt-2">Mobile / Touch Controls</h4>
+                    <h4 class="font-bold text-emerald-400 border-b border-zinc-800 pb-1 pt-2">Mobile Touch Controls</h4>
                     <div class="flex justify-between items-center py-1">
                         <span>Touch & Hold Screen (0.5s)</span>
-                        <span class="text-xs text-zinc-400">Prepare Timer</span>
+                        <span class="text-xs text-zinc-400">Arm Timer</span>
                     </div>
                     <div class="flex justify-between items-center py-1">
                         <span>Release Finger</span>
-                        <span class="text-xs text-zinc-400">Start Timer / Inspection</span>
+                        <span class="text-xs text-zinc-400">Start Solve / Inspection</span>
                     </div>
                     <div class="flex justify-between items-center py-1">
-                        <span>Tap Screen While Timing</span>
+                        <span>Tap Screen While Running</span>
                         <span class="text-xs text-zinc-400">Stop Timer</span>
                     </div>
                 </div>
@@ -241,7 +246,7 @@
                     <div class="flex items-center justify-between p-3.5 bg-zinc-800/50 rounded-xl border border-zinc-700/50">
                         <div>
                             <div class="font-semibold text-white">WCA 15s Inspection Time</div>
-                            <div class="text-xs text-zinc-400 mt-0.5">Counts down 15s prior to solve timer starting</div>
+                            <div class="text-xs text-zinc-400 mt-0.5">Counts down 15s before starting solve time</div>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="toggle-inspection" class="sr-only peer">
@@ -254,9 +259,9 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT APP ENGINE -->
+    <!-- JAVASCRIPT ENGINE -->
     <script>
-        // Global App Variables
+        // App State
         let timerState = 'IDLE'; // IDLE, HOLDING, READY, INSPECTING, RUNNING
         let startTime = 0;
         let elapsedInterval = null;
@@ -269,7 +274,7 @@
         let currentSessionId = 'default_3x3';
         let sessions = {};
 
-        // DOM Elements
+        // DOM References
         const timerDisplay = document.getElementById('timer-display');
         const statusIndicator = document.getElementById('status-indicator');
         const scrambleDisplay = document.getElementById('scramble');
@@ -278,7 +283,7 @@
         const toggleInspection = document.getElementById('toggle-inspection');
         const mainTimerArea = document.getElementById('main-timer');
 
-        // Statistics DOM
+        // Stats References
         const statCount = document.getElementById('stat-count');
         const statCountBadge = document.getElementById('stat-count-badge');
         const statBest = document.getElementById('stat-best');
@@ -291,7 +296,7 @@
 
         let sessionChart = null;
 
-        // Initialization
+        // On App Load
         window.onload = function() {
             loadStorage();
             initChart();
@@ -301,9 +306,9 @@
             updateUI();
         };
 
-        // Storage Operations
+        // Persistent Storage Logic
         function loadStorage() {
-            const stored = localStorage.getItem('kkk_timer_sessions_v2');
+            const stored = localStorage.getItem('kkk_timer_sessions_v3');
             if (stored) {
                 try { sessions = JSON.parse(stored); } catch(e) { sessions = {}; }
             }
@@ -337,7 +342,7 @@
         }
 
         function saveStorage() {
-            localStorage.setItem('kkk_timer_sessions_v2', JSON.stringify(sessions));
+            localStorage.setItem('kkk_timer_sessions_v3', JSON.stringify(sessions));
             localStorage.setItem('kkk_current_session_id', currentSessionId);
             localStorage.setItem('kkk_inspection_enabled', inspectionEnabled);
         }
@@ -363,7 +368,7 @@
         });
 
         document.getElementById('add-session-btn').addEventListener('click', () => {
-            const name = prompt('Session Name:', `Session ${Object.keys(sessions).length + 1}`);
+            const name = prompt('Enter new Session Name:', `Session ${Object.keys(sessions).length + 1}`);
             if (name) {
                 const newId = 'session_' + Date.now();
                 sessions[newId] = { id: newId, name: name.trim(), cubeType: currentCube, solves: [] };
@@ -376,10 +381,10 @@
 
         document.getElementById('delete-session-btn').addEventListener('click', () => {
             if (Object.keys(sessions).length <= 1) {
-                alert('You must keep at least one session!');
+                alert('You must keep at least one session active.');
                 return;
             }
-            if (confirm(`Delete current session "${sessions[currentSessionId].name}"?`)) {
+            if (confirm(`Delete session "${sessions[currentSessionId].name}"?`)) {
                 delete sessions[currentSessionId];
                 currentSessionId = Object.keys(sessions)[0];
                 currentCube = sessions[currentSessionId].cubeType;
@@ -391,7 +396,7 @@
             }
         });
 
-        // Cube Selectors
+        // Bottom Toolbar Cube Selector
         function setupCubeSelectors() {
             document.querySelectorAll('.cube-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -425,14 +430,14 @@
         function updateCubeButtonsUI() {
             document.querySelectorAll('.cube-btn').forEach(btn => {
                 if (btn.getAttribute('data-cube') === currentCube) {
-                    btn.className = 'cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white transition shadow';
+                    btn.className = 'cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-emerald-600 text-white transition shadow';
                 } else {
-                    btn.className = 'cube-btn px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition';
+                    btn.className = 'cube-btn shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-zinc-800 text-zinc-300 hover:bg-zinc-700 transition';
                 }
             });
         }
 
-        // Tailored Scramble Generator
+        // Full Puzzle Notation Scramble Generator
         function generateScramble() {
             let scramble = [];
             
@@ -498,7 +503,7 @@
             scrambleDisplay.innerText = scramble.join(" ");
         }
 
-        // Time Formatting & Average Calculation
+        // Time Utilities & WCA Averages Calculations
         function formatTime(ms) {
             if (isNaN(ms) || ms === null) return "-";
             let seconds = Math.floor(ms / 1000);
@@ -523,7 +528,7 @@
             let recent = solvesArray.slice(-num).map(s => s.time);
             recent.sort((a, b) => a - b);
             
-            // Standard trimmed average (drop top & bottom 5%)
+            // Trim top and bottom 5%
             let dropCount = Math.max(1, Math.floor(num * 0.05));
             for (let i = 0; i < dropCount; i++) {
                 recent.pop();
@@ -534,7 +539,7 @@
             return formatTime(sum / recent.length);
         }
 
-        // Charting
+        // Solve Trend Chart Initialization
         function initChart() {
             const canvas = document.getElementById('sessionChart');
             if (!canvas) return;
@@ -556,7 +561,7 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { display: false },
-                        y: { ticks: { color: '#71717a', font: { size: 9 } }, grid: { color: '#27272a' } }
+                        y: { ticks: { color: '#a1a1aa', font: { size: 9 } }, grid: { color: '#27272a' } }
                     }
                 }
             });
@@ -575,7 +580,7 @@
             solvesList.innerHTML = '';
             currentSolves.forEach((solve, index) => {
                 const div = document.createElement('div');
-                div.className = 'flex justify-between items-center bg-zinc-800/40 px-2.5 py-1 rounded text-xs hover:bg-zinc-800/80 transition';
+                div.className = 'flex justify-between items-center bg-zinc-800/40 px-2 py-1 rounded text-xs hover:bg-zinc-800/80 transition';
                 div.innerHTML = `
                     <span class="text-zinc-500 font-mono">#${index + 1}</span>
                     <span class="font-bold text-zinc-200 font-mono">${formatTime(solve.time)}</span>
@@ -612,7 +617,7 @@
             }
         };
 
-        // UNIFIED INPUT CONTROLLER (Desktop Keyboard + Mobile Touch)
+        // UNIFIED INPUT HANDLING (Mobile Touch Screen + PC Keyboard)
         function setupUnifiedInputListeners() {
             
             function handlePressStart() {
@@ -629,12 +634,12 @@
 
                 if (timerState === 'IDLE') {
                     timerState = 'HOLDING';
-                    timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-extrabold tabular-nums tracking-tight holding drop-shadow-xl";
+                    timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-black tabular-nums tracking-tight holding drop-shadow-2xl";
                     statusIndicator.innerText = "Hold...";
                     
                     holdTimeout = setTimeout(() => {
                         timerState = 'READY';
-                        timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-extrabold tabular-nums tracking-tight ready drop-shadow-xl";
+                        timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-black tabular-nums tracking-tight ready drop-shadow-2xl";
                         statusIndicator.innerText = "Release to Start";
                         timerDisplay.innerText = "0.00";
                     }, 500);
@@ -645,10 +650,10 @@
                 if (timerState === 'HOLDING') {
                     clearTimeout(holdTimeout);
                     timerState = 'IDLE';
-                    timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-extrabold tabular-nums tracking-tight text-white drop-shadow-xl";
+                    timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-black tabular-nums tracking-tight text-white drop-shadow-2xl";
                     statusIndicator.innerText = "Ready";
                 } else if (timerState === 'READY') {
-                    timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-extrabold tabular-nums tracking-tight text-white drop-shadow-xl";
+                    timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-black tabular-nums tracking-tight text-white drop-shadow-2xl";
                     
                     if (inspectionEnabled) {
                         startInspection();
@@ -677,7 +682,7 @@
                 }
             });
 
-            // Touch Listeners for Mobile
+            // Touch Listeners for Mobile Touch Screen
             mainTimerArea.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 handlePressStart();
@@ -689,11 +694,11 @@
             }, { passive: false });
         }
 
-        // Inspection Logic
+        // 15-second WCA Inspection
         function startInspection() {
             timerState = 'INSPECTING';
             inspectionTimeLeft = 15;
-            timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-extrabold tabular-nums tracking-tight inspecting drop-shadow-xl";
+            timerDisplay.className = "text-6xl sm:text-8xl md:text-9xl font-black tabular-nums tracking-tight inspecting drop-shadow-2xl";
             timerDisplay.innerText = inspectionTimeLeft;
             statusIndicator.innerText = "INSPECTION";
 
@@ -702,7 +707,6 @@
                 if (inspectionTimeLeft > 0) {
                     timerDisplay.innerText = inspectionTimeLeft;
                 } else {
-                    // Auto-start when inspection hits 0
                     stopInspection();
                     startTimer();
                 }
@@ -713,7 +717,7 @@
             clearInterval(inspectionInterval);
         }
 
-        // Timer Execution
+        // Timer Logic
         function startTimer() {
             timerState = 'RUNNING';
             statusIndicator.innerText = "TIMING...";
@@ -743,7 +747,7 @@
             updateUI();
         }
 
-        // Modal Logic
+        // Settings Modal Handlers
         const settingsModal = document.getElementById('settings-modal');
         document.getElementById('settings-btn').addEventListener('click', () => settingsModal.classList.remove('hidden'));
         document.getElementById('close-modal-btn').addEventListener('click', closeModal);
@@ -757,9 +761,9 @@
                 const targetTab = e.target.getAttribute('data-tab');
 
                 document.querySelectorAll('.tab-btn').forEach(tb => {
-                    tb.className = "tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-medium text-zinc-400 border-b-2 border-transparent hover:text-zinc-200 whitespace-nowrap focus:outline-none";
+                    tb.className = "tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-bold text-zinc-400 border-b-2 border-transparent hover:text-zinc-200 whitespace-nowrap focus:outline-none";
                 });
-                e.target.className = "tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-medium text-emerald-400 border-b-2 border-emerald-500 whitespace-nowrap focus:outline-none";
+                e.target.className = "tab-btn px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-bold text-emerald-400 border-b-2 border-emerald-500 whitespace-nowrap focus:outline-none";
 
                 document.querySelectorAll('.tab-content').forEach(tc => tc.classList.add('hidden'));
                 document.getElementById(`tab-${targetTab}`).classList.remove('hidden');
